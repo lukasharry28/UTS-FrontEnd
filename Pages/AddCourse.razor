@@ -1,0 +1,118 @@
+﻿@page "/add-course"
+@using BlazeUTS.Models
+@using BlazeUTS.Services
+@layout MainLayout
+@inject ICourseService CourseService
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+
+<h3>Add Course</h3>
+
+<EditForm Model="newCourse" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="courseName">Course Name:</label>
+        <InputText id="courseName" class="form-control mt-1" @bind-Value="newCourse.Name" required />
+        <ValidationMessage For="@(() => newCourse.Name)" />
+    </div>
+
+    <div class="form-group mt-2">
+        <label for="imageUpload">Upload Image:</label>
+        <InputFile id="imageUpload" class="form-control mt-1" OnChange="HandleFileSelected" />
+        <ValidationMessage For="@(() => newCourse.ImageName)" />
+    </div>
+
+    <div class="form-group mt-2">
+        <label for="duration">Duration (in hours):</label>
+        <InputNumber id="duration" class="form-control mt-1" @bind-Value="newCourse.Duration" required />
+        <ValidationMessage For="@(() => newCourse.Duration)" />
+        <input type="number" class="form-control mt-1" @bind="newCourse.Duration" min="0" hidden />
+    </div>
+
+    <div class="form-group mt-2">
+        <label for="description">Description:</label>
+        <InputTextArea id="description" class="form-control mt-1" @bind-Value="newCourse.Description" required />
+        <ValidationMessage For="@(() => newCourse.Description)" />s
+    </div>
+
+    <div class="form-group mt-2">
+        <label for="category">Category:</label>
+        <select id="category" class="form-select mt-1" @bind="@newCourse.CategoryId" required>
+            <option value="">Select a category</option>
+            @foreach (var category in categories)
+            {
+                <option value="@category.CategoryId">@category.Name</option>
+            }
+        </select>
+        <ValidationMessage For="@(() => newCourse.CategoryId)" />
+    </div>
+
+    <button type="submit" class="btn btn-outline-primary mt-2">Submit</button>
+    <button type="button" class="btn btn-outline-danger mt-2" @onclick="GoBack">Cancel</button>
+</EditForm>
+
+@if (showNotification)
+{
+    <div class="alert alert-danger d-flex align-items-center mt-2" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Error:">
+            <use xlink:href="#exclamation-triangle-fill" />
+        </svg>
+        <div>
+            @notificationMessage
+        </div>
+    </div>
+}
+
+@code {
+    private Course newCourse = new Course(); // Objek kursus baru untuk ditambahkan
+    private List<Category> categories = new List<Category>(); // Daftar kategori yang diambil dari CategoryService
+    private string notificationMessage = string.Empty; // Pesan notifikasi untuk kesalahan
+    private bool showNotification; // Menentukan apakah notifikasi ditampilkan
+    private IBrowserFile uploadedFile; // File yang diupload oleh pengguna
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = (await CategoryService.GetCategories()).ToList(); // Mengambil kategori dari layanan
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await CourseService.AddCourse(newCourse); // Menambahkan kursus baru
+        await SaveUploadedFile(); // Menyimpan file gambar yang diupload
+        NavigationManager.NavigateTo("/course"); // Mengarahkan kembali ke halaman kursus
+    }
+
+    private void HandleInvalidSubmit()
+    {
+        notificationMessage = "Harap isi semua field yang diperlukan!"; // Menampilkan pesan kesalahan jika ada field yang kosong
+        showNotification = true; // Menampilkan notifikasi
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/course"); // Mengarahkan kembali ke halaman kursus
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        uploadedFile = e.File; // Menyimpan file yang diupload
+        if (uploadedFile != null)
+        {
+            newCourse.ImageName = uploadedFile.Name; // Menyimpan nama file gambar ke objek kursus
+        }
+    }
+
+    private async Task SaveUploadedFile()
+    {
+        if (uploadedFile != null) // Mengecek apakah ada file yang diupload
+        {
+            var filePath = Path.Combine("wwwroot", "Uploads", uploadedFile.Name); // Path tempat menyimpan file
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await uploadedFile.OpenReadStream().CopyToAsync(stream); // Menyimpan file ke direktori
+            }
+        }
+    }
+}

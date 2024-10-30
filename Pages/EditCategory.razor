@@ -1,0 +1,81 @@
+﻿@page "/edit-category/{id:int}"
+@using BlazeUTS.Models
+@using BlazeUTS.Services
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<h3>Edit Category</h3>
+
+@if (category != null)
+{
+    <EditForm Model="category" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group col-sm-1">
+            <label for="categoryId">Category Id</label>
+            <input type="text" id="categoryId" class="form-control mt-1" value="@category.CategoryId" readonly />
+        </div>
+
+        <div class="form-group mt-2">
+            <label for="categoryName">Category Name</label>
+            <InputText id="categoryName" class="form-control mt-1" @bind-Value="category.Name" required />
+            <ValidationMessage For="@(() => category.Name)" />
+        </div>
+
+        <div class="form-group mt-2">
+            <label for="categoryDescription">Description</label>
+            <InputText id="categoryDescription" class="form-control mt-1" @bind-Value="category.Description" required />
+            <ValidationMessage For="@(() => category.Description)" />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-2">Save</button>
+        <button type="button" class="btn btn-secondary mt-2" @onclick="Cancel">Cancel</button>
+    </EditForm>
+
+    @if (showNotification)
+    {
+        <div class="alert alert-danger d-flex align-items-center mt-2" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Error:">
+                <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div>
+                @notificationMessage
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    [Parameter] public int Id { get; set; } // ID kategori yang akan diedit
+    private Category category; // Objek kategori untuk diedit
+    private string notificationMessage = string.Empty; // Pesan notifikasi untuk kesalahan
+    private bool showNotification; // Menentukan apakah notifikasi ditampilkan
+
+    protected override async Task OnInitializedAsync()
+    {
+        category = await CategoryService.GetCategoryById(Id); // Mengambil kategori berdasarkan ID
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await CategoryService.UpdateCategory(category); // Memperbarui kategori
+        NavigationManager.NavigateTo("/category"); // Mengarahkan kembali ke halaman kategori
+    }
+
+    private void HandleInvalidSubmit()
+    {
+        notificationMessage = "Harap isi semua field yang diperlukan!"; // Menampilkan pesan kesalahan jika ada field yang kosong
+        showNotification = true; // Menampilkan notifikasi
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/category"); // Mengarahkan kembali ke halaman kategori
+    }
+}

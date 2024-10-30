@@ -1,0 +1,61 @@
+﻿@page "/add-category"
+@using BlazeUTS.Models
+@using BlazeUTS.Services
+@layout MainLayout
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+
+<h3>Add Category</h3>
+
+<EditForm Model="newCategory" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="categoryName">Category Name:</label>
+        <InputText id="categoryName" class="form-control mt-1" @bind-Value="newCategory.Name" required />
+        <ValidationMessage For="@(() => newCategory.Name)" />
+    </div>
+    <div class="form-group mt-2">
+        <label for="description">Description:</label>
+        <InputText id="description" class="form-control mt-1" @bind-Value="newCategory.Description" required />
+        <ValidationMessage For="@(() => newCategory.Description)" />
+    </div>
+    <button type="submit" class="btn btn-outline-primary mt-2">Submit</button>
+    <button type="button" class="btn btn-outline-danger mt-2" @onclick="GoBack">Cancel</button>
+</EditForm>
+
+@if (showNotification)
+{
+    <div class="alert alert-danger d-flex align-items-center mt-2" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Error:">
+            <use xlink:href="#exclamation-triangle-fill" />
+        </svg>
+        <div>
+            @notificationMessage
+        </div>
+    </div>
+}
+
+@code {
+    private Category newCategory = new Category(); // Objek kategori baru untuk ditambahkan
+    private string notificationMessage = string.Empty; // Pesan notifikasi
+    private bool showNotification; // Menentukan apakah notifikasi ditampilkan
+
+    private async Task HandleValidSubmit()
+    {
+        await CategoryService.AddCategory(newCategory); // Menambahkan kategori baru menggunakan CategoryService
+        NavigationManager.NavigateTo("/category"); // Mengarahkan pengguna kembali ke halaman kategori setelah berhasil
+    }
+
+    private void HandleInvalidSubmit()
+    {
+        notificationMessage = "Harap isi semua field yang diperlukan!"; // Pesan notifikasi untuk pengisian tidak valid
+        showNotification = true; // Menampilkan notifikasi
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/category"); // Mengarahkan pengguna kembali ke halaman kategori
+    }
+}

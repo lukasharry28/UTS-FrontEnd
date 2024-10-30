@@ -1,0 +1,80 @@
+﻿@page "/category"
+@using BlazeUTS.Models
+@using BlazeUTS.Services
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<h3>Categories</h3>
+<div class="d-flex align-items-center">
+    <input class="form-control me-2" type="search" aria-label="Search" @bind="searchTerm" placeholder="Search Category..." style="width: 200px;" />
+    <button class="btn btn-outline-dark" @onclick="AddCategory"><i class="bi bi-plus-square"></i> Add Category</button>
+</div>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Category Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var rowNumber = 1; // Variabel untuk nomor urut
+        }
+        @foreach (var category in filteredCategories) // Mengiterasi daftar kategori yang sudah difilter
+        {
+            <tr>
+                <td>@rowNumber</td>
+                <td>@category.Name</td>
+                <td>@category.Description</td>
+                <td>
+                    <button class="btn btn-outline-primary" @onclick="() => EditCategory(category.CategoryId)"><i class="bi bi-pencil-square"></i> Edit</button>
+                    <button class="btn btn-outline-danger" @onclick="() => DeleteCategory(category.CategoryId)"><i class="bi bi-trash-fill"></i> Delete</button>
+                </td>
+            </tr>
+            rowNumber++; // Menambah nomor urut
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Category> categories = new List<Category>(); // Daftar untuk menyimpan kategori
+    private List<Category> filteredCategories => categories // Properti untuk memfilter kategori berdasarkan pencarian
+        .Where(c => string.IsNullOrWhiteSpace(searchTerm) || c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) // Memfilter jika `searchTerm` kosong atau sesuai dengan nama kategori
+        .ToList();
+    private string searchTerm = ""; // Variabel untuk menyimpan nilai pencarian
+
+    protected override async Task OnInitializedAsync() // Metode yang dipanggil saat komponen diinisialisasi
+    {
+        categories = (await CategoryService.GetCategories()).ToList(); // Mengambil daftar kategori dari layanan
+    }
+
+    private void AddCategory() // Metode untuk menavigasi ke halaman tambah kategori
+    {
+        NavigationManager.NavigateTo("/add-category");
+    }
+
+    private void EditCategory(int id) // Metode untuk menavigasi ke halaman edit kategori
+    {
+        NavigationManager.NavigateTo($"/edit-category/{id}");
+    }
+
+    private async Task DeleteCategory(int id) // Metode untuk menghapus kategori
+    {
+        var confirmed = await ConfirmDelete(); // Menampilkan konfirmasi sebelum menghapus
+        if (confirmed) // Jika pengguna mengonfirmasi
+        {
+            await CategoryService.DeleteCategory(id); // Menghapus kategori dari layanan
+            categories = (await CategoryService.GetCategories()).ToList(); // Mengambil kembali daftar kategori untuk memperbarui tampilan
+            StateHasChanged(); // Memperbarui tampilan komponen
+        }
+    }
+
+    private async Task<bool> ConfirmDelete() // Metode untuk menampilkan konfirmasi penghapusan
+    {
+        return await JS.InvokeAsync<bool>("confirm", "Are you sure you want to delete this category?"); // Menampilkan dialog konfirmasi
+    }
+}

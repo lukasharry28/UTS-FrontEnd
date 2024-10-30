@@ -1,0 +1,73 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\BlazeUTS.bundle.scp.css",
+      "PackagePath": "staticwebassets\\BlazeUTS.bundle.scp.css"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\uploads\\2024-09-19_100759.jpg",
+      "PackagePath": "staticwebassets\\uploads\\2024-09-19_100759.jpg"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\uploads\\Artboard 4@main.png",
+      "PackagePath": "staticwebassets\\uploads\\Artboard 4@main.png"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\uploads\\GAMBARDIGITAL1.png",
+      "PackagePath": "staticwebassets\\uploads\\GAMBARDIGITAL1.png"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\uploads\\Logo Gelbud Fix.png",
+      "PackagePath": "staticwebassets\\uploads\\Logo Gelbud Fix.png"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\uploads\\Pres. Prabowo.png",
+      "PackagePath": "staticwebassets\\uploads\\Pres. Prabowo.png"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\uploads\\Urban.png",
+      "PackagePath": "staticwebassets\\uploads\\Urban.png"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\uploads\\Wapres. Gibran.png",
+      "PackagePath": "staticwebassets\\uploads\\Wapres. Gibran.png"
+    },
+    {
+      "Id": "D:\\UKDW 2022\\Semester 5\\Program\\Frontend\\UTS\\BlazeUTS\\BlazeUTS\\wwwroot\\uploads\\ftn.png",
+      "PackagePath": "staticwebassets\\uploads\\ftn.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.BlazeUTS.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.BlazeUTS.props",
+      "PackagePath": "build\\BlazeUTS.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.BlazeUTS.props",
+      "PackagePath": "buildMultiTargeting\\BlazeUTS.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.BlazeUTS.props",
+      "PackagePath": "buildTransitive\\BlazeUTS.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

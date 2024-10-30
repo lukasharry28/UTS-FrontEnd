@@ -1,0 +1,119 @@
+﻿@page "/edit-course/{courseId:int}"
+@using BlazeUTS.Models
+@using BlazeUTS.Services
+@inject ICategoryService CategoryService
+@inject ICourseService CourseService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<h3>Edit Course</h3>
+
+@if (course == null)
+{
+    <p><em>Loading...</em></p>
+    // Menampilkan loading saat data belum tersedia
+}
+else
+{
+    <EditForm Model="course" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group col-sm-1 mb-2">
+            <label for="courseId">Course Id</label>
+            <input type="text" id="courseId" class="form-control mt-1" value="@course.Id" readonly />
+        </div>
+
+        <div class="mb-2">
+            <label for="name" class="form-label">Course Name</label>
+            <InputText id="name" class="form-control" @bind-Value="course.Name" required />
+            <ValidationMessage For="@(() => course.Name)" />
+        </div>
+
+        <div class="mb-2">
+            <label for="imageUpload" class="form-label">Upload Image</label>
+            <InputFile id="imageUpload" class="form-control" OnChange="HandleFileSelected" />
+            @if (!string.IsNullOrEmpty(course.ImageName))
+            {
+                <img src="/Uploads/@course.ImageName" alt="Current Image" width="150" />
+                // Menampilkan gambar saat ada
+            }
+        </div>
+
+        <div class="mb-2">
+            <label for="duration">Duration (in hours):</label>
+            <InputNumber id="duration" class="form-control mt-1" @bind-Value="course.Duration" required />
+            <ValidationMessage For="@(() => course.Duration)" />
+        </div>
+
+        <div class="mb-2">
+            <label for="description" class="form-label">Description</label>
+            <InputTextArea id="description" class="form-control" @bind-Value="course.Description" required />
+            <ValidationMessage For="@(() => course.Description)" />
+        </div>
+
+        <div class="mb-2">
+            <label for="category" class="form-label">Category</label>
+            <select id="category" class="form-select" @bind="course.CategoryId" required>
+                <option value="">Select a category</option>
+                @foreach (var category in categories)
+                {
+                    <option value="@category.CategoryId">@category.Name</option>
+                }
+            </select>
+            <ValidationMessage For="@(() => course.CategoryId)" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int courseId { get; set; } // ID course yang akan diedit
+
+    private Course course; // Objek course
+    private List<Category> categories; // Daftar kategori
+    private IBrowserFile uploadedFile; // File yang diupload
+
+    protected override async Task OnInitializedAsync()
+    {
+        course = await CourseService.GetCourseById(courseId); // Ambil course berdasarkan ID
+        categories = (await CategoryService.GetCategories()).ToList(); // Ambil daftar kategori
+    }
+
+    private async Task HandleValidSubmit() // Menyimpan perubahan saat form valid
+    {
+        await CourseService.UpdateCourse(course);
+        await SaveUploadedFile(); // Simpan gambar yang diupload jika ada
+
+        NavigationManager.NavigateTo("/course"); // Kembali ke halaman course
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e) // Menangani file yang dipilih
+    {
+        uploadedFile = e.File; // Simpan file yang dipilih
+        if (uploadedFile != null)
+        {
+            course.ImageName = uploadedFile.Name; // Simpan nama file ke course
+        }
+    }
+
+    private async Task SaveUploadedFile() // Simpan file yang diupload ke server
+    {
+        if (uploadedFile != null)
+        {
+            var filePath = Path.Combine("wwwroot", "Uploads", uploadedFile.Name);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await uploadedFile.OpenReadStream().CopyToAsync(stream); // Salin konten file ke disk
+            }
+        }
+    }
+
+    private void Cancel() // Menangani pembatalan
+    {
+        NavigationManager.NavigateTo("/course"); // Kembali ke halaman course
+    }
+}
